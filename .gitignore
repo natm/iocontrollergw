@@ -130,6 +130,7 @@ dmypy.json
 
 # Project specifics
 config-home.yaml
+.idea/
 distatus.py
 onoff_loop.py
 schedtest.py
