@@ -66,5 +66,5 @@ iocontroller/status
 Deployment
 
 ```
-docker run --init -d --name="iocontroller"  /etc/iocontroller-config.yaml:/config.yaml natm:/iocontroller-gateway:stable
+docker run --init -d --name="iocontroller"  /etc/iocontroller-config.yaml:/config.yaml natm:/iocontrollergw:latest
 ```
