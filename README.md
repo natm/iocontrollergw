@@ -45,10 +45,10 @@ Running the app:
 
 Devices support status:
 
-| Manufacturer | Part number  | Identifier       | Digital out | D in | A in | Description            | Status      |
-|--------------|--------------|------------------|-------------|------|-------------------------------|-------------|
-| HHC          | HHC-N-8I8O   | `hhc.hhc-n-8i8o` | 8 (relays)  |      | 8    | Bare board             | Development |
-| Hi-Flying    | HF6508       | `hiflying.hf6508`| 8 (relays)  | 8    | 8    | Semi industrial device | Development |
+| Mfgr      | Part number  | Identifier       | Digital out | D in | A in | Description            | Status      |
+|-----------|--------------|------------------|-------------|------|------|------------------------|-------------|
+| HHC       | HHC-N-8I8O   | `hhc.hhc-n-8i8o` | 8 (relays)  |      | 8    | Bare board             | Development |
+| Hi-Flying | HF6508       | `hiflying.hf6508`| 8 (relays)  | 8    | 8    | Semi industrial device | Development |
 
 
 MQTT Topics
