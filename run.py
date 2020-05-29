@@ -11,7 +11,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from ioctlgw import version
 from ioctlgw.boards import get_board
 from ioctlgw.mqttconnector import MqttConnector
-from ioctlgw.web import WebService
+# from ioctlgw.web import WebService
 
 from multiprocessing import Queue
 
@@ -57,8 +57,8 @@ class Service(object):
 
         while True:
             while self.statusqueue.empty() is False:
-                event = self.statusqueue.get()
-                self.mqtt.board_io_event(name=event["name"])
+                msg = self.statusqueue.get()
+                self.mqtt.board_io_event(name=msg["name"], msg=msg)
             while self.connectionqueue.empty() is False:
                 event = self.connectionqueue.get()
                 self.mqtt.board_connection_event( name=event["name"], event=event["event"])

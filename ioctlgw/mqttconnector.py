@@ -62,11 +62,18 @@ class MqttConnector(object):
         self.mqtt.publish(topic=topic, payload=payload, qos=0)
         LOG.info("%s %s", topic, payload)
 
-    def board_connection_event(self, event, name):
+    def board_connection_event(self, name, event):
         self.mqtt_publish_message(suffix=f"boards/{name}/connection", payload=event)
 
-    def board_io_event(self, name):
-        self.mqtt_publish_message(suffix=f"boards/{name}/digitalinput/1/status", payload="X")
+    def board_io_event(self, name, msg):
+        component = msg["component"]
+        num = msg["num"]
+        status = msg["status"]
+        if status:
+            payload = "ON"
+        else:
+            payload = "OFF"
+        self.mqtt_publish_message(suffix=f"boards/{name}/{component}/{num}/status", payload=payload)
 
     def publish_status(self):
         status = {
