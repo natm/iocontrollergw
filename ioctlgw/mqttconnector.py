@@ -2,6 +2,7 @@ import logging
 import json
 import paho.mqtt.client as mqttc
 from ioctlgw import version
+from ioctlgw.componentstate import ComponentState
 
 LOG = logging.getLogger(__name__)
 
@@ -55,7 +56,30 @@ class MqttConnector(object):
         LOG.info("MQTT Subscribed %s", mid)
 
     def mqtt_on_message(self, client, userdata, msg):
-        LOG.info("MQTT Message %s %s", msg.topic, msg.payload)
+        LOG.info("MQTT Message %s %s", msg.topic, str(msg.payload))
+        if msg.topic.startswith(self.mqtt_base_topic):
+            topic = msg.topic[len(self.mqtt_base_topic)+1:]
+            parts = topic.split("/")
+            # TODO: check number of parts
+            controller_name = parts[1]
+            component = parts[2]
+            num = int(parts[3])
+            iocontroller = self.service.controllers[controller_name]
+            if controller_name not in self.service.controllers.keys():
+                LOG.warning("Message for unknown iocontroller '%s'", controller_name)
+                return
+            if component not in ["digitaloutput"]:
+                LOG.warning("Message for unknown component '%s'", component)
+                return
+            if num > iocontroller.num_digital_outputs:
+                LOG.warning("Output too high for this board: %s", num)
+                return
+            action = msg.payload.decode('utf-8').strip().upper()
+            if action not in ["OFF", "ON"]:
+                LOG.warning("Unsupported action '%s'", action)
+                return
+            LOG.info("Requesting %s %s %s %s %s", iocontroller, controller_name, component, num, action)
+            iocontroller.request_digitaloutput(ComponentState(component="digitaloutput", num=num, status=action))
 
     def mqtt_publish_message(self, suffix, payload, qos=0):
         topic = "%s/%s" % (self.mqtt_base_topic, suffix)
@@ -65,15 +89,8 @@ class MqttConnector(object):
     def board_connection_event(self, name, event):
         self.mqtt_publish_message(suffix=f"boards/{name}/connection", payload=event)
 
-    def board_io_event(self, name, msg):
-        component = msg["component"]
-        num = msg["num"]
-        status = msg["status"]
-        if status:
-            payload = "ON"
-        else:
-            payload = "OFF"
-        self.mqtt_publish_message(suffix=f"boards/{name}/{component}/{num}/status", payload=payload)
+    def board_io_event(self, name, state):
+        self.mqtt_publish_message(suffix=f"boards/{name}/{state.component}/{state.num}/status", payload=state.status)
 
     def publish_status(self):
         status = {

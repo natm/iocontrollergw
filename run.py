@@ -58,7 +58,7 @@ class Service(object):
         while True:
             while self.statusqueue.empty() is False:
                 msg = self.statusqueue.get()
-                self.mqtt.board_io_event(name=msg["name"], msg=msg)
+                self.mqtt.board_io_event(name=msg["name"], state=msg["state"])
             while self.connectionqueue.empty() is False:
                 event = self.connectionqueue.get()
                 self.mqtt.board_connection_event( name=event["name"], event=event["event"])
