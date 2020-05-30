@@ -134,3 +134,4 @@ config-home.yaml
 distatus.py
 onoff_loop.py
 schedtest.py
+mqtt_on_off_loop.py
