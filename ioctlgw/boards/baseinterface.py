@@ -102,12 +102,12 @@ class BaseInterface(threading.Thread):
                 # request digital input status
                 dest.send(bytes.fromhex('01 01 00 00 00 08 3d cc'))
                 data = dest.recv(8)
-                self.process_response_packets(data=data)
+                self.process_response_packets(data=data, response_to="read_di_status_all")
 
                 # request digital output status
-                # dest.send(bytes.fromhex('01 01 00 10 00 08 3c 09'))
-                # data = dest.recv(8)
-                # self.process_response_packets(data=data)
+                dest.send(bytes.fromhex('01 01 00 10 00 08 3c 09'))
+                data = dest.recv(8)
+                self.process_response_packets(data=data, response_to="rear_do_status_all")
 
                 if self.requestqueue.empty() is False:
                     request = self.requestqueue.get()
@@ -122,7 +122,7 @@ class BaseInterface(threading.Thread):
                 LOG.warning("%s socket error %s reconnecting", self.name, e)
                 dest = self.connect()
 
-    def process_response_packets(self, data):
+    def process_response_packets(self, data, response_to=None):
         h = data.hex()
         if h in self.STATIC_RESPONSES.keys():
             outcome = self.STATIC_RESPONSES[h]
@@ -131,20 +131,25 @@ class BaseInterface(threading.Thread):
             if pin_changed:
                 self.push_status(component=outcome.component, num=outcome.num)
         elif h.startswith("010101"):
-            # Handle DI 8 response.
-            # TODO: also handle DO 8 way response
+            # Handle DI / DO responses.
+            if response_to is None:
+                LOG.warning("Unknown treble 01 response")
+                return
+            elif response_to == "read_di_status_all":
+                component = "digitalinput"
+            elif response_to == "rear_do_status_all":
+                component = "digitaloutput"
+
             do_hex = "%s%s" % (h[6], h[7])
             bits = str(bin(int(do_hex, 16)).zfill(8))
             y = self.bits_to_hash(bits=bits)
             for pin, status in y.items():
-                pin_changed = self.update_state(ComponentState(component="digitalinput", num=pin+1, status=status))
+                pin_changed = self.update_state(ComponentState(component=component, num=pin+1, status=status))
                 if pin_changed:
-                    self.push_status(component="digitalinput", num=pin + 1)
-            # Handle DO Control write single coil response
-            pass
-
+                    self.push_status(component=component, num=pin + 1)
         else:
             LOG.warning("%s Response packets unexpected: %s", self.name, h)
+        return
 
     def request_digitaloutput(self, state):
         # called via MQTT
