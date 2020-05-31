@@ -9,7 +9,7 @@ from ioctlgw.componentstate import ComponentState
 
 
 DEFAULT_STATUS_INTERVAL = 60
-DEFAULT_CONNECTION_TIMEOUT = 10
+DEFAULT_CONNECTION_TIMEOUT = 5
 DEFAULT_CONNECTION_RECONNECT = 2
 DEFAULT_COMMAND_PAUSE = 0.1
 DEFAULT_DO_ALL_CHECK = 5
@@ -147,7 +147,7 @@ class BaseInterface(threading.Thread):
                 component = "digitaloutput"
 
             do_hex = "%s%s" % (h[6], h[7])
-            t = bin(int(do_hex, 16))
+            t = bin(int(do_hex, 16)).zfill(8)
             pins = self.bits_to_pins(bits=t)
             for pin, status in pins.items():
                 pin_changed = self.update_state(ComponentState(component=component, num=pin, status=status))
