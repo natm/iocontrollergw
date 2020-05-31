@@ -12,6 +12,7 @@ DEFAULT_STATUS_INTERVAL = 60
 DEFAULT_CONNECTION_TIMEOUT = 10
 DEFAULT_CONNECTION_RECONNECT = 2
 DEFAULT_COMMAND_PAUSE = 0.1
+DEFAULT_DO_ALL_CHECK = 30
 
 LOG = logging.getLogger(__name__)
 
@@ -98,6 +99,7 @@ class BaseInterface(threading.Thread):
         self.scheduler.start()
 
         dest = self.connect()
+        do_all_check_count = None
         while True:
             try:
                 # request digital input status
@@ -105,10 +107,12 @@ class BaseInterface(threading.Thread):
                 data = dest.recv(8)
                 self.process_response_packets(data=data, response_to="read_di_status_all")
 
-                # request digital output status
-                dest.send(bytes.fromhex('01 01 00 10 00 08 3c 09'))
-                data = dest.recv(8)
-                self.process_response_packets(data=data, response_to="read_do_status_all")
+                if do_all_check_count is None or (do_all_check_count * DEFAULT_COMMAND_PAUSE) >= DEFAULT_DO_ALL_CHECK:
+                    # request digital output status
+                    dest.send(bytes.fromhex('01 01 00 10 00 08 3c 09'))
+                    data = dest.recv(8)
+                    self.process_response_packets(data=data, response_to="read_do_status_all")
+                    do_all_check_count = 0
 
                 if self.requestqueue.empty() is False:
                     request = self.requestqueue.get()
@@ -119,6 +123,7 @@ class BaseInterface(threading.Thread):
                             self.process_response_packets(data=data)
                 else:
                     time.sleep(DEFAULT_COMMAND_PAUSE)
+                    do_all_check_count += 1
             except socket.error as e:
                 LOG.warning("%s socket error %s reconnecting", self.name, e)
                 dest = self.connect()
