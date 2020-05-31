@@ -12,7 +12,7 @@ DEFAULT_STATUS_INTERVAL = 60
 DEFAULT_CONNECTION_TIMEOUT = 10
 DEFAULT_CONNECTION_RECONNECT = 2
 DEFAULT_COMMAND_PAUSE = 0.1
-DEFAULT_DO_ALL_CHECK = 30
+DEFAULT_DO_ALL_CHECK = 5
 
 LOG = logging.getLogger(__name__)
 
@@ -107,7 +107,7 @@ class BaseInterface(threading.Thread):
                 data = dest.recv(8)
                 self.process_response_packets(data=data, response_to="read_di_status_all")
 
-                if do_all_check_count is None or (do_all_check_count * DEFAULT_COMMAND_PAUSE) >= DEFAULT_DO_ALL_CHECK:
+                if do_all_check_count is None or int(do_all_check_count * DEFAULT_COMMAND_PAUSE) >= DEFAULT_DO_ALL_CHECK:
                     # request digital output status
                     dest.send(bytes.fromhex('01 01 00 10 00 08 3c 09'))
                     data = dest.recv(8)
@@ -147,12 +147,12 @@ class BaseInterface(threading.Thread):
                 component = "digitaloutput"
 
             do_hex = "%s%s" % (h[6], h[7])
-            bits = str(bin(int(do_hex, 16)).zfill(8))
-            y = self.bits_to_hash(bits=bits)
-            for pin, status in y.items():
-                pin_changed = self.update_state(ComponentState(component=component, num=pin+1, status=status))
+            t = bin(int(do_hex, 16))
+            pins = self.bits_to_pins(bits=t)
+            for pin, status in pins.items():
+                pin_changed = self.update_state(ComponentState(component=component, num=pin, status=status))
                 if pin_changed:
-                    self.push_status(component=component, num=pin + 1)
+                    self.push_status(component=component, num=pin)
         else:
             LOG.warning("%s Response packets unexpected: %s", self.name, h)
         return
@@ -182,11 +182,12 @@ class BaseInterface(threading.Thread):
             # board status
             self.service.queue_boards_status.put({"name": self.name, "address": self.address})
 
-    def bits_to_hash(self, bits):
+    def bits_to_pins(self, bits):
+        sbits = str(bits)
         h = {}
-        for b in range(0, 8):
-            if bits[7 - b] == "1":
-                h[b] = "ON"
-            else:
-                h[b] = "OFF"
+        for p in range(1, 9):
+            h[p] = "OFF"
+            if sbits[len(bits) - p] == "1":
+                h[p] = "ON"
         return h
+
