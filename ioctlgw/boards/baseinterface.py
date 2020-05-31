@@ -11,6 +11,7 @@ from ioctlgw.componentstate import ComponentState
 DEFAULT_STATUS_INTERVAL = 60
 DEFAULT_CONNECTION_TIMEOUT = 10
 DEFAULT_CONNECTION_RECONNECT = 2
+DEFAULT_COMMAND_PAUSE = 0.1
 
 LOG = logging.getLogger(__name__)
 
@@ -107,7 +108,7 @@ class BaseInterface(threading.Thread):
                 # request digital output status
                 dest.send(bytes.fromhex('01 01 00 10 00 08 3c 09'))
                 data = dest.recv(8)
-                self.process_response_packets(data=data, response_to="rear_do_status_all")
+                self.process_response_packets(data=data, response_to="read_do_status_all")
 
                 if self.requestqueue.empty() is False:
                     request = self.requestqueue.get()
@@ -117,7 +118,7 @@ class BaseInterface(threading.Thread):
                             data = dest.recv(8)
                             self.process_response_packets(data=data)
                 else:
-                    time.sleep(0.1)
+                    time.sleep(DEFAULT_COMMAND_PAUSE)
             except socket.error as e:
                 LOG.warning("%s socket error %s reconnecting", self.name, e)
                 dest = self.connect()
@@ -137,7 +138,7 @@ class BaseInterface(threading.Thread):
                 return
             elif response_to == "read_di_status_all":
                 component = "digitalinput"
-            elif response_to == "rear_do_status_all":
+            elif response_to == "read_do_status_all":
                 component = "digitaloutput"
 
             do_hex = "%s%s" % (h[6], h[7])
