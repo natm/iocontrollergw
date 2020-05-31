@@ -54,11 +54,10 @@ class BaseInterface(threading.Thread):
         "0105001700007dce": ComponentState(component="digitaloutput", num=8, status="OFF")
     }
 
-    def __init__(self, name, address, connectionqueue, statusqueue, num_digital_outputs=0, num_digital_inputs=0):
+    def __init__(self, name, address, service, num_digital_outputs=0, num_digital_inputs=0):
         threading.Thread.__init__(self)
         self.name = name.strip().lower()
-        self.connectionqueue = connectionqueue
-        self.statusqueue = statusqueue
+        self.service = service
         self.requestqueue = Queue()
         self.host = address.split(":")[0]
         self.port = int(address.split(":")[1])
@@ -85,12 +84,12 @@ class BaseInterface(threading.Thread):
                 LOG.info("%s Connected", self.name)
                 self._connection_state = "connected"
                 self._connection_count += 1
-                self.connectionqueue.put({"event": "connected", "name": self.name})
+                self.service.queue_boards_connection.put({"event": "connected", "name": self.name})
                 return s
             except socket.error as e:
                 LOG.warning("%s socket error %s reconnecting", self.name, e)
                 self._connection_state = "disconnected"
-                self.connectionqueue.put({"event": "disconnected", "name": self.name})
+                self.service.queue_boards_connection.put({"event": "disconnected", "name": self.name})
                 time.sleep(DEFAULT_CONNECTION_RECONNECT)
 
     def run(self):
@@ -162,10 +161,10 @@ class BaseInterface(threading.Thread):
         if component is None and num is None:
             for component in self.status.keys():
                 for num, status in self.status[component].items():
-                    self.statusqueue.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
+                    self.service.queue_boards_status.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
         else:
             status = self.status[component][num]
-            self.statusqueue.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
+            self.service.queue_boards_status.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
 
     def bits_to_hash(self, bits):
         h = {}
