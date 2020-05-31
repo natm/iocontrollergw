@@ -1,4 +1,4 @@
-# I/O Controller gateway
+    # I/O Controller gateway
 
 Gateway for various protocol to/from multiple Chinese remote IO controllers (relays, digital input and output).
 
@@ -8,14 +8,14 @@ Sensible interfaces provided for:
 
 * MQTT (Home Assistant and NodeRed compatible)
 
-#### Supported device status:
+### Supported device status:
 
 | Mfgr      | Part number  | Identifier       | Digital out | D in | A in | Description            | Status      |
 |-----------|--------------|------------------|-------------|------|------|------------------------|-------------|
 | HHC       | HHC-N-8I8O   | `hhc.hhc-n-8i8o` | 8 (relays)  |      | 8    | Bare board             | Development |
 | Hi-Flying | HF6508       | `hiflying.hf6508`| 8 (relays)  | 8    | 8    | Semi industrial device | Development |
 
-#### Config and deployment 
+### Config and deployment 
 
 `config.yaml`:
 
@@ -41,7 +41,7 @@ Run it!
 
 `docker run --init -d --name=iocontroller  /etc/myconfig.yaml:/config.yaml natm:/iocontrollergw:latest`
 
-#### MQTT Topics
+### MQTT Topics
 
 ```
 iocontroller/boards/cupboard1/connection                  connected | disconnected
@@ -54,7 +54,7 @@ iocontroller/status
 ```
 
 
-#### Development
+### Development
 
 Local environment setup:
 
