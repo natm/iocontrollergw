@@ -1,23 +1,23 @@
 # I/O Controller gateway
 
-Gateway to/from multiple Chinese remote IO controllers (relays, digital input and output).
+Gateway for various protocol to/from multiple Chinese remote IO controllers (relays, digital input and output).
 
 [![Build Status](https://travis-ci.org/natm/iocontrollergw.svg?branch=master)](https://travis-ci.org/natm/iocontrollergw)
 
 Sensible interfaces provided for:
 
-* MQTT (Home Assistant compatible)
+* MQTT (Home Assistant and NodeRed compatible)
 
+#### Supported device status:
 
-Development setup:
+| Mfgr      | Part number  | Identifier       | Digital out | D in | A in | Description            | Status      |
+|-----------|--------------|------------------|-------------|------|------|------------------------|-------------|
+| HHC       | HHC-N-8I8O   | `hhc.hhc-n-8i8o` | 8 (relays)  |      | 8    | Bare board             | Development |
+| Hi-Flying | HF6508       | `hiflying.hf6508`| 8 (relays)  | 8    | 8    | Semi industrial device | Development |
 
-```
-virtualenv -p python3 venv
-source venv/bin/activate
-pip3 install -r requirements.txt
-```
+#### Config and deployment 
 
-Configuration:
+`config.yaml`:
 
 ```
 iocontrollers:
@@ -37,21 +37,11 @@ mqtt:
   topic: iocontroller
 ```
 
-Running the app:
+Run it!
 
-```
-./run.py -c /etc/myconfig.yaml
-```
+`docker run --init -d --name=iocontroller  /etc/myconfig.yaml:/config.yaml natm:/iocontrollergw:latest`
 
-Devices support status:
-
-| Mfgr      | Part number  | Identifier       | Digital out | D in | A in | Description            | Status      |
-|-----------|--------------|------------------|-------------|------|------|------------------------|-------------|
-| HHC       | HHC-N-8I8O   | `hhc.hhc-n-8i8o` | 8 (relays)  |      | 8    | Bare board             | Development |
-| Hi-Flying | HF6508       | `hiflying.hf6508`| 8 (relays)  | 8    | 8    | Semi industrial device | Development |
-
-
-MQTT Topics
+#### MQTT Topics
 
 ```
 iocontroller/boards/cupboard1/connection                  connected | disconnected
@@ -63,8 +53,15 @@ iocontroller/boards/cupboard1/digitalinput/1/command      OFF
 iocontroller/status
 ```
 
-Deployment
+
+#### Development
+
+Local environment setup:
 
 ```
-docker run --init -d --name="iocontroller"  /etc/iocontroller-config.yaml:/config.yaml natm:/iocontrollergw:latest
+virtualenv -p python3 venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+./run.py -c my-config.taml
 ```
+
