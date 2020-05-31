@@ -58,13 +58,14 @@ class Service(object):
                 # TODO: handle being unable to start a board
 
             while True:
-                while self.queue_boards_status.empty() is False:
+                if self.queue_boards_status.empty() is False:
                     msg = self.queue_boards_status.get()
                     self.mqtt.board_io_event(name=msg["name"], state=msg["state"])
-                while self.queue_boards_connection.empty() is False:
+                elif self.queue_boards_connection.empty() is False:
                     event = self.queue_boards_connection.get()
                     self.mqtt.board_connection_event( name=event["name"], event=event["event"])
-                time.sleep(0.05)
+                else:
+                    time.sleep(0.05)
         else:
             LOG.info("Exiting, non-daemon mode")
             sys.exit(0)
