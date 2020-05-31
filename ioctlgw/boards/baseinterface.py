@@ -59,6 +59,7 @@ class BaseInterface(threading.Thread):
         self.name = name.strip().lower()
         self.service = service
         self.requestqueue = Queue()
+        self.address = address
         self.host = address.split(":")[0]
         self.port = int(address.split(":")[1])
         self.state_di_current = None
@@ -158,13 +159,17 @@ class BaseInterface(threading.Thread):
             return False
 
     def push_status(self, component=None, num=None):
-        if component is None and num is None:
+        if component is not None and num is not None:
+            # individual component status
+            status = self.status[component][num]
+            self.service.queue_boards_io_status.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
+        else:
+            # all component status
             for component in self.status.keys():
                 for num, status in self.status[component].items():
-                    self.service.queue_boards_status.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
-        else:
-            status = self.status[component][num]
-            self.service.queue_boards_status.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
+                    self.service.queue_boards_io_status.put({"name": self.name, "state": ComponentState(component=component, num=num, status=status)})
+            # board status
+            self.service.queue_boards_status.put({"name": self.name, "address": self.address})
 
     def bits_to_hash(self, bits):
         h = {}

@@ -92,6 +92,9 @@ class MqttConnector(object):
     def board_io_event(self, name, state):
         self.mqtt_publish_message(suffix=f"boards/{name}/{state.component}/{state.num}/status", payload=state.status)
 
+    def board_status(self, name, raw_msg):
+        assert True
+
     def publish_status(self):
         status = {
             "uptime": self.service.uptime,

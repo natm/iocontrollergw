@@ -26,6 +26,7 @@ class Service(object):
         self.controllers = {}
         self.mqtt = MqttConnector(service=self)
         self.queue_boards_connection = Queue()
+        self.queue_boards_io_status = Queue()
         self.queue_boards_status = Queue()
 
     def start(self, daemon):
@@ -60,6 +61,9 @@ class Service(object):
             while True:
                 if self.queue_boards_status.empty() is False:
                     msg = self.queue_boards_status.get()
+                    self.mqtt.board_status(name=msg["name"], raw_msg=msg)
+                elif self.queue_boards_io_status.empty() is False:
+                    msg = self.queue_boards_io_status.get()
                     self.mqtt.board_io_event(name=msg["name"], state=msg["state"])
                 elif self.queue_boards_connection.empty() is False:
                     event = self.queue_boards_connection.get()
