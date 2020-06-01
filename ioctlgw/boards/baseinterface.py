@@ -190,4 +190,3 @@ class BaseInterface(threading.Thread):
             if sbits[len(bits) - p] == "1":
                 h[p] = "ON"
         return h
-

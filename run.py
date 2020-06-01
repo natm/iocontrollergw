@@ -8,6 +8,7 @@ import socket
 import time
 import yaml
 from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
 from ioctlgw import version
 from ioctlgw.boards import get_board
 from ioctlgw.mqttconnector import MqttConnector
@@ -21,7 +22,7 @@ class Service(object):
 
     def __init__(self, config):
         self.config = config
-        self.startup = time.time()
+        self.startup = datetime.now()
         self.scheduler = BackgroundScheduler()
         self.controllers = {}
         self.mqtt = MqttConnector(service=self)
@@ -76,7 +77,7 @@ class Service(object):
 
     @property
     def uptime(self):
-        return int((time.time()-self.startup)/60)
+        return int((datetime.now()-self.startup).total_seconds()/60)
 
 
 def main():

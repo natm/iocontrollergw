@@ -58,7 +58,7 @@ class MqttConnector(object):
     def mqtt_on_message(self, client, userdata, msg):
         LOG.info("MQTT Message %s %s", msg.topic, str(msg.payload))
         if msg.topic.startswith(self.mqtt_base_topic):
-            topic = msg.topic[len(self.mqtt_base_topic)+1:]
+            topic = msg.topic[len(self.mqtt_base_topic) + 1:]
             parts = topic.split("/")
             # TODO: check number of parts
             controller_name = parts[1]
@@ -78,7 +78,7 @@ class MqttConnector(object):
             if action not in ["OFF", "ON"]:
                 LOG.warning("Unsupported action '%s'", action)
                 return
-            LOG.info("Requesting %s %s %s %s %s", iocontroller, controller_name, component, num, action)
+            LOG.debug("Requesting %s %s %s %s %s", iocontroller, controller_name, component, num, action)
             iocontroller.request_digitaloutput(ComponentState(component="digitaloutput", num=num, status=action))
 
     def mqtt_publish_message(self, suffix, payload, qos=0):
@@ -97,7 +97,11 @@ class MqttConnector(object):
 
     def publish_status(self):
         status = {
-            "uptime": self.service.uptime,
             "version": version()
         }
         self.mqtt_publish_message(suffix="status", payload=json.dumps(status))
+        uptime = {
+            "minutes": self.service.uptime,
+            "started": self.service.startup.isoformat()
+        }
+        self.mqtt_publish_message(suffix="uptime", payload=json.dumps(uptime))
