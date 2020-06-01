@@ -1,4 +1,4 @@
-    # I/O Controller gateway
+# I/O Controller gateway
 
 Gateway for various protocol to/from multiple Chinese remote IO controllers (relays, digital input and output).
 
