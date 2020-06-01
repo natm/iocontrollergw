@@ -1,0 +1,11 @@
+on:
+  push:
+
+jobs:
+  build:
+    name: Build docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - name: Build the tagged Docker image
+      run: docker build . --file Dockerfile
