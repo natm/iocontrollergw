@@ -4,7 +4,16 @@ on:
       - master
 
 jobs:
-  build:
+  dockerpublish:
+    name: build-push
+    uses: docker/build-push-action@v1
+    with:
+      username: ${{ DOCKER_USERNAME }}
+      password: ${{ DOCKER_PASSWORD }}
+      registry: hub.docker.com
+      repository: natmorris/iocontrollergw
+      tags: latest
+  deploydocs:
     name: Deploy docs
     runs-on: ubuntu-latest
     steps:
