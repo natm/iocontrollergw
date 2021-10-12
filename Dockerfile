@@ -1,4 +1,4 @@
-FROM python:3.6.10-buster
+FROM 3.9-slim-buster
 ADD requirements.txt /opt/ioctlgw/requirements.txt
 RUN pip3 install -r /opt/ioctlgw/requirements.txt
 ADD ioctlgw /opt/ioctlgw/ioctlgw
