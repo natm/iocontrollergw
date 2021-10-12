@@ -8,7 +8,7 @@ Sensible interfaces provided for:
 
 * MQTT (Home Assistant and NodeRed compatible)
 
-Docker builds provided for:
+Docker [builds provided](https://hub.docker.com/r/natmorris/iocontrollergw) for:
 
 * `linux/386`
 * `linux/amd64`
