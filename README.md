@@ -8,6 +8,14 @@ Sensible interfaces provided for:
 
 * MQTT (Home Assistant and NodeRed compatible)
 
+Docker builds provided for:
+
+* `linux/386`
+* `linux/amd64`
+* `linux/arm/v6`
+* `linux/arm/v7`
+* `linux/arm64`
+
 ### Supported device status:
 
 | Mfgr      | Part number  | Identifier       | Digital out | D in | A in | Description            | Status      |
@@ -39,7 +47,7 @@ mqtt:
 
 Run it!
 
-`docker run --init -d --name=iocontroller  /etc/myconfig.yaml:/config.yaml natm:/iocontrollergw:latest`
+`docker run --init -d --name=iocontroller  /etc/myconfig.yaml:/config.yaml natmorris/iocontrollergw:latest`
 
 ### MQTT Topics
 
