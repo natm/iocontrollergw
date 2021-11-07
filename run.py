@@ -23,12 +23,15 @@ class Service(object):
     def __init__(self, config):
         self.config = config
         self.startup = datetime.now()
-        self.scheduler = BackgroundScheduler()
+        self.instance = self.config["service"]["instance"]
+        self.timezone = self.config["service"]["timezone"]
+        self.scheduler = BackgroundScheduler(timezone=self.timezone)
         self.controllers = {}
         self.mqtt = MqttConnector(service=self)
         self.queue_boards_connection = Queue()
         self.queue_boards_io_status = Queue()
         self.queue_boards_status = Queue()
+
 
     def start(self, daemon):
 
@@ -112,8 +115,8 @@ def main():
             sys.exit(1)
 
     s = Service(config=config)
+    LOG.info("Service instance %s ready", s.instance)
     s.start(daemon=daemon)
-
 
 
     sys.exit(0)

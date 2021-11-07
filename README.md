@@ -28,6 +28,9 @@ Docker [builds provided](https://hub.docker.com/r/natmorris/iocontrollergw) for:
 `config.yaml`:
 
 ```
+service:
+  name: home
+  timezone: Europe/London
 iocontrollers:
   relay1:
     address: 192.168.0.11:8899

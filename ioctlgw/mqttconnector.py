@@ -13,14 +13,13 @@ class MqttConnector(object):
         self.service = service
         self.config = self.service.config
         self.mqtt_config = self.config["mqtt"]
-        self.mqtt = mqttc.Client()
+        self.mqtt = mqttc.Client(client_id=f"iocontrollergw_{service.instance}")
         self.mqtt_base_topic = self.mqtt_config["topic"]
         self.mqtt.on_connect = self.mqtt_on_connect
         self.mqtt.on_disconnect = self.mqtt_on_disconnect
         self.mqtt.on_message = self.mqtt_on_message
         self.mqtt.on_subscribe = self.mqtt_on_subscribe
         # MQTT status jobs
-
         self.service.scheduler.add_job(self.publish_status)
         self.service.scheduler.add_job(self.publish_status, 'interval', seconds=10, jitter=5)
 

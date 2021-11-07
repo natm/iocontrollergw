@@ -65,7 +65,7 @@ class BaseInterface(threading.Thread):
         self.host = address.split(":")[0]
         self.port = int(address.split(":")[1])
         self.state_di_current = None
-        self.scheduler = BackgroundScheduler()
+        self.scheduler = BackgroundScheduler(timezone=service.timezone)
         self.scheduler.add_job(self.push_status, 'interval', seconds=DEFAULT_STATUS_INTERVAL, jitter=2)
         self._connection_state = "disconnected"
         self._connection_count = 0
