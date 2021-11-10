@@ -41,6 +41,7 @@ jobs:
           tags: natmorris/iocontrollergw:latest
   deploydocs:
     name: Deploy docs
+    needs: dockerpublish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
