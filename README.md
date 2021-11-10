@@ -10,7 +10,6 @@ Sensible interfaces provided for:
 
 Docker [builds provided](https://hub.docker.com/r/natmorris/iocontrollergw) for:
 
-* `linux/386`
 * `linux/amd64`
 * `linux/arm/v6`
 * `linux/arm/v7`
