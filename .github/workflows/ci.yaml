@@ -21,6 +21,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Replace version variable in __init__.py
+        id: replace_version
+        run: |
+          sed -i "s/__VERSION__.*/__VERSION__ = \"github-ci\"/" ioctlgw/__init__.py
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
