@@ -44,7 +44,7 @@ jobs:
         id: replace_version
         run: |
           echo ${{ steps.prep.outputs.version }}
-          sed -i "s/__VERSION__.*/__VERSION__ = \"${{ steps.prep.outputs.version }}\"/" ioctlgw/__init__.py
+          sed -i "s/^__VERSION__.*/__VERSION__ = \"${{ steps.prep.outputs.version }}\"/" ioctlgw/__init__.py
       - name: Multi platform build and push
         id: docker_build
         uses: docker/build-push-action@v2
