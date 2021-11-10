@@ -2,8 +2,6 @@
 
 Gateway for various protocol to/from multiple Chinese remote IO controllers (relays, digital input and output).
 
-[![Build Status](https://travis-ci.org/natm/iocontrollergw.svg?branch=master)](https://travis-ci.org/natm/iocontrollergw)
-
 Sensible interfaces provided for:
 
 * MQTT (Home Assistant and NodeRed compatible)
