@@ -81,10 +81,10 @@ class BaseInterface(threading.Thread):
             try:
                 self._connection_state = "disconnected"
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                LOG.info("%s Connecting %s:%s", self.name, self.host, self.port)
+                LOG.info("%s socket connecting %s:%s", self.name, self.host, self.port)
                 s.settimeout(DEFAULT_CONNECTION_TIMEOUT)
                 s.connect((self.host, self.port))
-                LOG.info("%s Connected", self.name)
+                LOG.info("%s socket connected", self.name)
                 self._connection_state = "connected"
                 self._connection_count += 1
                 self.service.queue_boards_connection.put({"event": "connected", "name": self.name})
@@ -94,6 +94,8 @@ class BaseInterface(threading.Thread):
                 self._connection_state = "disconnected"
                 self.service.queue_boards_connection.put({"event": "disconnected", "name": self.name})
                 time.sleep(DEFAULT_CONNECTION_RECONNECT)
+            except Exception as e:
+                LOG.warning("%s uncaught exception in socket connect %s", self.name, e)
 
     def run(self):
         self.scheduler.start()
@@ -127,6 +129,8 @@ class BaseInterface(threading.Thread):
             except socket.error as e:
                 LOG.warning("%s socket error %s reconnecting", self.name, e)
                 dest = self.connect()
+            except Exception as e:
+                LOG.warning("%s uncaught exception in loop %s", self.name, e)
 
     def process_response_packets(self, data, response_to=None):
         h = data.hex()

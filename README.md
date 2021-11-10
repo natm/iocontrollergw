@@ -50,7 +50,7 @@ mqtt:
 
 Run it!
 
-`docker run --init -d --name=iocontroller  /etc/myconfig.yaml:/config.yaml natmorris/iocontrollergw:latest`
+`docker run --init -d --name=iocontroller  /etc/myconfig.yaml:/config.yaml **natmorris/iocontrollergw:latest**`
 
 ### MQTT Topics
 
