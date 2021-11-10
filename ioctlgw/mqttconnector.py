@@ -1,7 +1,7 @@
 import logging
 import json
 import paho.mqtt.client as mqttc
-from ioctlgw import version
+from ioctlgw import build, version
 from ioctlgw.componentstate import ComponentState
 
 LOG = logging.getLogger(__name__)
@@ -96,6 +96,7 @@ class MqttConnector(object):
 
     def publish_status(self):
         status = {
+            "build": build(),
             "version": version()
         }
         self.mqtt_publish_message(suffix="status", payload=json.dumps(status))

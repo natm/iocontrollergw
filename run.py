@@ -9,7 +9,7 @@ import time
 import yaml
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
-from ioctlgw import version
+from ioctlgw import build, version
 from ioctlgw.boards import get_board
 from ioctlgw.mqttconnector import MqttConnector
 # from ioctlgw.web import WebService
@@ -94,7 +94,8 @@ def main():
 
     args = parser.parse_args()
 
-    LOG.info("IO Controller Gateway v%s on Python v%d.%d.%d", version(), sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
+    LOG.info("IO Controller Gateway v%s %s on Python v%d.%d.%d", version(), build(),
+             sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
 
     # check config exists
     cfgpath = args.config.strip()
